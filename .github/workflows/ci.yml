@@ -1,0 +1,74 @@
+name: Elixir CI Build and Migrate
+env:
+  MIX_ENV: test
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  POSTGRES_VERSION: 14
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+    timeout-minutes: 15
+
+jobs:
+  build:
+    timeout-minutes: 7
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:${{ env.POSTGRES_VERSION }}
+        ports: ['5432:5432']
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >
+          --health-cmd pg_isready
+          --health-interval 10s
+    options: >
+      --health-cmd pg_isready
+      --health-interval 10s
+      --health-timeout 5s
+      --health-retries 5
+    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    strategy:
+      matrix:
+        otp: [${{ secrets.OTP_VERSION }}]
+        elixir: [${{ secrets.ELIXIR_VERSION }}]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+
+      - name: Get Deps Cache
+        uses: actions/cache@v3
+        id: deps
+        with:
+          path: deps/
+          key: ${{hashFiles('mix.lock')}}-deps
+
+      - name: Get Build Cache
+        uses: actions/cache@v3
+        with:
+        with:
+          path: _build/
+          key: ${{runner.os}}-${{hashFiles('mix.lock')}}-build-${{ env.MIX_ENV }}
+        if: steps.deps.outputs.cache-hit != 'true'
+        run: |
+          mix deps.get
+
+      - name: Install Dependencies
+        run: |
+          mix compile --warnings-as-errors
+
+      - name: Migrate Base
+        run: |
+          mix ecto.create
+          mix ecto.migrate
