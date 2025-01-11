@@ -10,51 +10,43 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias VisionHub.{
-  Repo,
-  User,
-  Device
-}
+alias Faker
+alias VisionHub.Repo
+alias VisionHub.Accounts.User
+alias VisionHub.Accounts.Device
 
-defmodule VisionHub.Seeds do
-  def run do
-    IO.puts("Starting the seed script...")
+current_time = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+brands = ["Intelbras", "Hikvision", "Giga", "Vivotek"]
 
-    brands = ["Intelbras", "Hikvision", "Giga", "Vivotek"]
-    current_time = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+# Gerar usuários
+user_data = Enum.map(1..1000, fn _ ->
+  %{
+    email: Faker.Internet.email(),
+    name: Faker.Person.name(),
+    inserted_at: current_time,
+    updated_at: current_time
+  }
+end)
 
-    Repo.transaction(fn ->
-      1..1000
-      |> Enum.each(fn _ ->
-        user_data = %{
-          email: Faker.Internet.email(),
-          name: Faker.Person.name(),
-          inserted_at: current_time,
-          updated_at: current_time
-        }
+# Executando inserções sequenciais dentro de transações
+Enum.each(user_data, fn user_data ->
+  Repo.transaction(fn ->
+    # Inserir usuário
+    user = Repo.insert!(User.changeset(%User{}, user_data))
 
-        user =
-          %User{}
-          |> User.changeset(user_data)
-          |> Repo.insert!()
-
-        devices_data =
-          for _ <- 1..50 do
-            %{
-              brand: Enum.random(brands),
-              is_active: Enum.random([true, false]),
-              user_id: user.id,
-              inserted_at: current_time,
-              updated_at: current_time
-            }
-          end
-
-        Repo.insert_all(Device, devices_data)
-      end)
+    # Gerar e inserir dispositivos
+    devices_data = Enum.map(1..50, fn _ ->
+      %{
+        brand: Enum.random(brands),
+        is_active: Enum.random([true, false]),
+        user_id: user.id,
+        inserted_at: current_time,
+        updated_at: current_time
+      }
     end)
 
-    IO.puts("Seed script executed successfully!")
-  end
-end
+    Repo.insert_all(Device, devices_data)
+  end)
+end)
 
-VisionHub.Seeds.run()
+IO.puts("Seed script executed successfully!")
