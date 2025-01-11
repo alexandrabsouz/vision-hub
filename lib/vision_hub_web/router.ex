@@ -28,6 +28,7 @@ defmodule VisionHubWeb.Router do
     scope "/api", VisionHubWeb do
       pipe_through :api
       post "/notify-users", UserController, :notify_users
+      get "/devices", DeviceController, :index
     end
   end
 end

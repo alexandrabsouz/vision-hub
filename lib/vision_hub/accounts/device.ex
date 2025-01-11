@@ -7,17 +7,18 @@ defmodule VisionHub.Accounts.Device do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias VisionHub.User
+  alias VisionHub.Accounts.User
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
   @required_params [:brand, :user_id]
-  @derive {Jason.Encoder, only: [:id, :brand, :is_active, :user_id]}
+  @derive {Jason.Encoder, only: [:id, :brand, :is_active, :user_id, :name]}
 
   schema "devices" do
     field :brand, :string
     field :is_active, :boolean
+    field :name, :string
 
     belongs_to :user, User
 

@@ -11,12 +11,13 @@ defmodule VisionHub.Accounts.User do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @required_params [:email, :name]
-  @derive {Jason.Encoder, only: [:id, :name, :email]}
+  @derive {Jason.Encoder, only: [:id, :name, :email, :devices, :is_active, :deactivated_at]}
 
   schema "users" do
     field :email, :string
     field :name, :string
     field :is_active, :boolean, default: true
+    field :deactivated_at, :utc_datetime, default: nil
 
     has_many :devices, Device
 
@@ -39,8 +40,8 @@ defmodule VisionHub.Accounts.User do
   """
   def changeset(struct \\ %__MODULE__{}, params) do
     struct
-    |> cast(params, @required_params)
-    |> validate_required(@required_params ++ [:is_active])
+    |> cast(params, @required_params ++ [:deactivated_at, :is_active])
+    |> validate_required(@required_params)
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
   end

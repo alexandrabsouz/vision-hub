@@ -35,8 +35,7 @@ defmodule VisionHubWeb.UserController do
         max_concurrency: 10
       )
 
-    Task.await_many(tasks)
-    Enum.each(tasks, fn {:ok, _result} -> :ok end)
+    Enum.each(tasks, fn {:ok, task} -> Task.await(task) end)
 
     conn
     |> put_status(:ok)
