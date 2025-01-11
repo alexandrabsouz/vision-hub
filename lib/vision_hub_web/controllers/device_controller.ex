@@ -25,7 +25,7 @@ defmodule VisionHubWeb.DeviceController do
   """
   def index(conn, params) do
     users_with_devices =
-      Account.get_active_users_with_devices(
+      Account.get_users_with_devices(
         Map.get(params, "name"),
         Map.get(params, "brand"),
         Map.get(params, "order_by")

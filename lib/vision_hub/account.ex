@@ -36,16 +36,16 @@ defmodule VisionHub.Account do
 
   ## Examples
 
-      iex> VisionHub.Account.get_active_users_with_devices("Camera", "Hikvision", "brand")
+      iex> VisionHub.Account.get_users_with_devices("Device 1", "Hikvision", "brand")
       [%User{}, ...]
 
   """
-  @spec get_active_users_with_devices(
+  @spec get_users_with_devices(
           String.t() | nil,
           String.t() | nil,
           String.t() | nil
         ) :: [User.t()]
-  def get_active_users_with_devices(
+  def get_users_with_devices(
         device_name_filter \\ nil,
         device_brand_filter \\ nil,
         order_by \\ nil
@@ -53,7 +53,6 @@ defmodule VisionHub.Account do
     query =
       User
       |> join(:inner, [u], d in assoc(u, :devices))
-      |> where([u, d], u.is_active == true)
 
     query
     |> DeviceFilters.apply_device_name_filter(device_name_filter)

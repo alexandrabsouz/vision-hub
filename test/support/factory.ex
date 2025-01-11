@@ -7,7 +7,8 @@ defmodule VisionHub.Factory do
   def user_factory do
     %User{
       email: sequence(:email, &"user#{&1}@example.com"),
-      name: "User"
+      name: "User",
+      deactivated_at: nil
     }
   end
 
