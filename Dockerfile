@@ -1,34 +1,29 @@
-###############
-# Build stage #
-###############
-FROM elixir:1.18-alpine AS build
+#####################
+# Build stage       #
+#####################
+FROM elixir:1.14.4-alpine AS build
 
 RUN apk update && apk add --no-cache build-base git
 
 COPY . .
 
-RUN mix local.hex --force \
-    && mix local.rebar --force
+RUN mix local.hex --force && mix local.rebar --force && mix deps.get
 
-RUN mix deps.get \
-    && mix release --path /export \
-    && mix phx.digest \
-    && mix release --path /export
+RUN mix release
 
-####################
-# Deployment Stage #
-####################
+#####################
+# Deployment Stage  #
+#####################
 FROM erlang:25-alpine
 
 WORKDIR /app
 
 ENV TZ="Etc/UTC"
 
-# permissions security
-RUN chown nobody:nobody /app
+RUN mkdir -p /app && chown nobody:nobody /app
 USER nobody:nobody
 
-COPY --from=build --chown=nobody:nobody /export /app
+COPY --from=build /app/_build/prod/rel/vision_hub /app
 
 CMD ["bin/vision_hub", "start"]
 
