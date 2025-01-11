@@ -24,5 +24,10 @@ defmodule VisionHubWeb.Router do
       live_dashboard "/dashboard", metrics: VisionHubWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+
+    scope "/api", VisionHubWeb do
+      pipe_through :api
+      post "/notify-users", UserController, :notify_users
+    end
   end
 end
