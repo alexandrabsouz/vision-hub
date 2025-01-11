@@ -47,7 +47,8 @@ defmodule VisionHub.MixProject do
       {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:faker, "~> 0.17", only: :dev, runtime: false},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:ex_machina, "~> 2.5", only: :test}
     ]
   end
 
