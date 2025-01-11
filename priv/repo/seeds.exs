@@ -33,19 +33,21 @@ defmodule VisionHub.Seeds do
           updated_at: current_time
         }
 
-        user = %User{}
-        |> User.changeset(user_data)
-        |> Repo.insert!()
+        user =
+          %User{}
+          |> User.changeset(user_data)
+          |> Repo.insert!()
 
-        devices_data = for _ <- 1..50 do
-          %{
-            brand: Enum.random(brands),
-            is_active: Enum.random([true, false]),
-            user_id: user.id,
-            inserted_at: current_time,
-            updated_at: current_time
-          }
-        end
+        devices_data =
+          for _ <- 1..50 do
+            %{
+              brand: Enum.random(brands),
+              is_active: Enum.random([true, false]),
+              user_id: user.id,
+              inserted_at: current_time,
+              updated_at: current_time
+            }
+          end
 
         Repo.insert_all(Device, devices_data)
       end)
