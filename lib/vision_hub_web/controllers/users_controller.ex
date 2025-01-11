@@ -26,9 +26,14 @@ defmodule VisionHubWeb.UserController do
   def notify_users(conn, _params) do
     users = Account.get_users_with_hikvision_devices()
 
-    tasks = Task.async_stream(users, fn user ->
-      Mailer.send_notification_email(user.email)
-    end, max_concurrency: 10)
+    tasks =
+      Task.async_stream(
+        users,
+        fn user ->
+          Mailer.send_notification_email(user.email)
+        end,
+        max_concurrency: 10
+      )
 
     Task.await_many(tasks)
     Enum.each(tasks, fn {:ok, _result} -> :ok end)
