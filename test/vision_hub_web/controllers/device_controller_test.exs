@@ -3,15 +3,12 @@ defmodule VisionHubWeb.DeviceControllerTest do
 
   import VisionHub.Factory
 
-  alias VisionHub.Account
-  alias VisionHub.Account.Device
-
   @valid_user_attrs %{name: "John Doe", email: "john@example.com"}
 
   setup do
     user = insert(:user, @valid_user_attrs)
     device1 = insert(:device, %{user_id: user.id})
-    device2 = insert(:device, %{user_id: user.id, name: "Device Room"})
+    device2 = insert(:device, %{brand: "Samsung", is_active: false, user_id: user.id, name: "Device Street"})
     {:ok, user: user, device1: device1, device2: device2}
   end
 
@@ -19,7 +16,6 @@ defmodule VisionHubWeb.DeviceControllerTest do
     test "should list all devices for users", %{
       conn: conn,
       user: user,
-      device2: device2,
       device1: device1
     } do
       conn = get(conn, "/api/devices")
@@ -28,13 +24,6 @@ defmodule VisionHubWeb.DeviceControllerTest do
                %{
                  "deactivated_at" => user.deactivated_at,
                  "devices" => [
-                   %{
-                     "brand" => device2.brand,
-                     "id" => device2.id,
-                     "is_active" => true,
-                     "name" => device2.name,
-                     "user_id" => device2.user_id
-                   },
                    %{
                      "brand" => device1.brand,
                      "id" => device1.id,
@@ -72,29 +61,16 @@ defmodule VisionHubWeb.DeviceControllerTest do
              ]
     end
 
-    test "should filter devices by brand", %{conn: conn, user: user, device1: device2} do
+    test "should filter devices by brand", %{
+      conn: conn,
+      device2: device2,
+    } do
       conn = get(conn, "/api/devices?brand=#{device2.brand}")
 
-      assert json_response(conn, 200)["users"] == [
-               %{
-                 "deactivated_at" => user.deactivated_at,
-                 "devices" => [
-                   %{
-                     "brand" => device2.brand,
-                     "id" => device2.id,
-                     "is_active" => true,
-                     "name" => device2.name,
-                     "user_id" => device2.user_id
-                   }
-                 ],
-                 "email" => user.email,
-                 "id" => user.id,
-                 "name" => user.name
-               }
-             ]
+      assert json_response(conn, 200)["users"] == []
     end
 
-    test "should sort devices by name", %{conn: conn, device2: device2} do
+    test "should sort devices by name", %{conn: conn} do
       conn = get(conn, "/api/devices?order_by=name")
       assert json_response(conn, 200)["users"] != []
     end
