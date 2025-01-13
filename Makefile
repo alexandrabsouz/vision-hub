@@ -6,6 +6,7 @@ setup:
 	$(DOCKER_COMPOSE) up -d 
 	@echo "Esperando o PostgreSQL iniciar..."
 	sleep 1
+	$(MIX_CMD) deps.get
 	$(MIX_CMD) ecto.create
 	$(MIX_CMD) ecto.migrate
 	$(MIX_CMD) run priv/repo/seeds.exs
