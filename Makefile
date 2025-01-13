@@ -10,6 +10,7 @@ setup:
 	$(MIX_CMD) ecto.migrate
 	$(MIX_CMD) run priv/repo/seeds.exs
 	@echo "Banco de dados criado e migrações aplicadas."
+	$(MIX_CMD) phx.server
 
 up:
 	$(DOCKER_COMPOSE) up -d 
