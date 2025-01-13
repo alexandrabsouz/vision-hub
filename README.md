@@ -26,36 +26,7 @@ GET http://localhost:4000/devices
 ### Expected Response
 
 ```json
-{
-    "users": [
-        {
-            "user": {
-                "id": 1,
-                "name": "João Silva",
-                "email": "joao@example.com"
-            },
-            "device": {
-                "id": 1,
-                "name": "Camera 1",
-                "brand": "Hikvision",
-                "user_id": 1
-            }
-        },
-        {
-            "user": {
-                "id": 2,
-                "name": "Maria Oliveira",
-                "email": "maria@example.com"
-            },
-            "device": {
-                "id": 2,
-                "name": "Camera 2",
-                "brand": "Hikvision",
-                "user_id": 2
-            }
-        }
-    ]
-}
+{}
 ```
 
 ### Example Request with Name Filter
@@ -69,23 +40,7 @@ GET http://localhost:4000/devices?name=Camera%201
 ### Expected Response
 
 ```json
-{
-    "users": [
-        {
-            "user": {
-                "id": 1,
-                "name": "João Silva",
-                "email": "joao@example.com"
-            },
-            "device": {
-                "id": 1,
-                "name": "Camera 1",
-                "brand": "Hikvision",
-                "user_id": 1
-            }
-        }
-    ]
-}
+{}
 ```
 
 ### Example Request with Brand Filter
@@ -99,36 +54,7 @@ GET http://localhost:4000/devices?brand=Hikvision
 ### Expected Response
 
 ```json
-{
-    "users": [
-        {
-            "user": {
-                "id": 1,
-                "name": "João Silva",
-                "email": "joao@example.com"
-            },
-            "device": {
-                "id": 1,
-                "name": "Camera 1",
-                "brand": "Hikvision",
-                "user_id": 1
-            }
-        },
-        {
-            "user": {
-                "id": 2,
-                "name": "Maria Oliveira",
-                "email": "maria@example.com"
-            },
-            "device": {
-                "id": 2,
-                "name": "Camera 2",
-                "brand": "Hikvision",
-                "user_id": 2
-            }
-        }
-    ]
-}
+{}
 ```
 
 ## 2. Route `/notify-users` - Notify Users with Hikvision Devices
@@ -153,8 +79,8 @@ Since the route simulates sending an email, the response will be a confirmation 
 
 ```json
 {
-    "status": "success",
-    "message": "Emails successfully sent to users with Hikvision devices."
+    "status": 200,
+    "message": "Users notified"
 }
 ```
 
