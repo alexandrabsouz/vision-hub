@@ -1,26 +1,24 @@
-DOCKER_COMPOSE = docker-compose
+DOCKER_COMPOSE = docker compose
 
-APP_SERVICE = app
-DB_SERVICE = db
-
-MIX_CMD = docker-compose exec $(APP_SERVICE) mix
+MIX_CMD = mix
 
 setup:
-	$(DOCKER_COMPOSE) up -d $(DB_SERVICE)
+	$(DOCKER_COMPOSE) up -d 
 	@echo "Esperando o PostgreSQL iniciar..."
-	sleep 5
+	sleep 1
 	$(MIX_CMD) ecto.create
 	$(MIX_CMD) ecto.migrate
+	$(MIX_CMD) run priv/repo/seeds.exs
 	@echo "Banco de dados criado e migrações aplicadas."
 
 up:
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) up -d 
 
 server:
-	$(DOCKER_COMPOSE) exec $(APP_SERVICE) mix phx.server
+	$(MIX_CMD) phx.server
 
 db:
-	$(DOCKER_COMPOSE) up -d $(DB_SERVICE)
+	$(DOCKER_COMPOSE) up -d 
 
 down:
 	$(DOCKER_COMPOSE) down
