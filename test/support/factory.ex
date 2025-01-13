@@ -1,6 +1,7 @@
 defmodule VisionHub.Factory do
   use ExMachina.Ecto, repo: VisionHub.Repo
 
+  alias Ecto.UUID
   alias VisionHub.Accounts.{Device, User}
 
   @spec user_factory() :: User.t()
@@ -17,7 +18,8 @@ defmodule VisionHub.Factory do
     %Device{
       brand: "Intelbras",
       is_active: true,
-      name: "Device"
+      name: "Device",
+      user_id: UUID.generate()
     }
   end
 end

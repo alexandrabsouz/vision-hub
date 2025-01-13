@@ -4,6 +4,8 @@ defmodule VisionHubWeb.UserController do
   """
   use VisionHubWeb, :controller
 
+  require Logger
+
   alias VisionHub.Account
   alias VisionHub.Mailer
 
@@ -35,7 +37,14 @@ defmodule VisionHubWeb.UserController do
         max_concurrency: 10
       )
 
-    Enum.each(tasks, fn {:ok, task} -> Task.await(task) end)
+    results = Enum.to_list(tasks)
+
+    Enum.each(results, fn
+      {:ok, {:ok, _result}} -> :ok
+      {:ok, {:error, reason}} -> Logger.error("Failed to send email: #{inspect(reason)}")
+      {:exit, reason} -> Logger.error("Task exited: #{inspect(reason)}")
+      {:error, reason} -> Logger.error("Task error: #{inspect(reason)}")
+    end)
 
     conn
     |> put_status(:ok)

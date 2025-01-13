@@ -58,16 +58,15 @@ defmodule VisionHub.AccountTest do
 
   describe "get_users_with_devices/3" do
     setup do
-      user1 = insert(:user, email: "user1@example.com", is_active: true)
+      user1 = insert(:user, email: "user1@example.com")
 
       user2 =
         insert(:user,
           email: "user2@example.com",
-          is_active: false,
           deactivated_at: DateTime.utc_now()
         )
 
-      user3 = insert(:user, email: "user3@example.com", is_active: true)
+      user3 = insert(:user, email: "user3@example.com")
 
       device1 = insert(:device, user_id: user1.id, brand: "Hikvision", name: "Device Room")
       device2 = insert(:device, user_id: user3.id, brand: "Hikvision", name: "Device Job")

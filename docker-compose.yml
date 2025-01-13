@@ -1,35 +1,19 @@
 services:
-  postgres:
-    image: postgres:13
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./docker/postgres:/docker-entrypoint-initdb.d
+  db:
+    image: postgres:15
     environment:
-      POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      POSTGRES_DB: "visionhub_dev"
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres/visionhub_dev
-    command: sh -c "mix deps.get && mix ecto.create && mix ecto.migrate && mix phx.server"
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: visionhub_dev
     volumes:
-      - .:/app
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "4000:4000"
-    depends_on:
-      - postgres
+      - "5432:5432"  
     networks:
       - visionhub_network
 
 volumes:
-  postgres-data:
-    driver: local
+  postgres_data:
 
 networks:
   visionhub_network:
