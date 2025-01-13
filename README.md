@@ -1,98 +1,63 @@
-# API Documentation
+# VisionHub
 
 
-## 1. Route `/devices` - List User Devices
+Setup and Development Workflow
+To easily set up your environment and get started with VisionHub, you can use the Makefile commands to handle the setup process. This file automates various tasks like database creation, migrations, and starting the application.
 
-This route allows listing the devices of all users. You can use optional filters, such as `name`, `brand`, and `order_by`, to refine the search.
-
-### Endpoint
-
-```bash
-GET /devices
-```
-
-### Query Parameters
-
-- `name`: Filters devices by name (optional).
-- `brand`: Filters devices by brand (optional).
-- `order_by`: Orders the results by `name` or `brand` (optional).
-
-### Example Request without Filters
+Requirements
+Docker and Docker Compose: Ensure that Docker and Docker Compose are installed on your machine.
+Elixir: The application is built with Elixir, so you need Elixir and Erlang installed as well.
+Setup Steps
+Clone the Repository:
 
 ```bash
-GET http://localhost:4000/devices
+git clone https://github.com/your-username/visionhub.git
+cd visionhub
 ```
+Run the setup Command:
 
-### Expected Response
-
-```json
-{}
-```
-
-### Example Request with Name Filter
-
-To filter devices by the name `Camera 1`:
+The setup target automates the process of setting up your Docker containers, initializing the database, running migrations, and starting the Phoenix server. Simply run:
 
 ```bash
-GET http://localhost:4000/devices?name=Camera%201
+make setup
 ```
+This command does the following:
 
-### Expected Response
+Spins up the Docker containers (including PostgreSQL).
+Waits for the PostgreSQL database to initialize.
+Creates the database (ecto.create).
+Applies database migrations (ecto.migrate).
+Seeds the database with initial data (run priv/repo/seeds.exs).
+Starts the Phoenix server.
+After running this command, your app should be up and running on http://localhost:4000.
 
-```json
-{}
-```
-
-### Example Request with Brand Filter
-
-To filter devices by the brand `Hikvision`:
+Other Useful Commands
+make up: Start the Docker containers in the background.
 
 ```bash
-GET http://localhost:4000/devices?brand=Hikvision
+make up
 ```
-
-### Expected Response
-
-```json
-{}
-```
-
-## 2. Route `/notify-users` - Notify Users with Hikvision Devices
-
-This route simulates sending notifications to all users who have Hikvision devices.
-
-### Endpoint
+make server: Start the Phoenix server manually (if you prefer not to use setup).
 
 ```bash
-POST /notify-users
+make db: Starts only the Docker containers related to the database.
 ```
-
-### Example Request
 
 ```bash
-POST http://localhost:4000/notify-users
+make down: Shut down and remove the Docker containers.
 ```
 
-### Expected Response
-
-Since the route simulates sending an email, the response will be a confirmation of the action. The format might be something like:
-
-```json
-{
-    "status": 200,
-    "message": "Users notified"
-}
+```bash
+make logs: Tail the Docker logs for all running containers.
 ```
 
-## 3. Error Examples
-
-### Request with Invalid Filter
-
-If an invalid filter is provided (e.g., a device brand that does not exist), the response might be an error like the following:
-
-```json
-{
-    "status": "error",
-    "message": "Invalid filter parameter 'brand'."
-}
+```bash
+make clean: Stop and remove the Docker containers and volumes, effectively cleaning up the environment.
 ```
+
+Troubleshooting
+If you run into any issues while setting up the environment, here are some tips:
+
+Ensure Docker is running and that your system meets all prerequisites.
+Check Docker container logs using make logs to see any errors.
+Make sure the Elixir dependencies are installed via mix deps.get.
