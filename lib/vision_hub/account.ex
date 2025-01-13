@@ -11,6 +11,8 @@ defmodule VisionHub.Account do
 
   import Ecto.Query
 
+  @behaviour VisionHub.AccountBehaviour
+
   @brand "Hikvision"
   @doc """
   Retrieves all users who have Hikvision devices associated with their accounts.
@@ -53,6 +55,7 @@ defmodule VisionHub.Account do
     query =
       User
       |> join(:inner, [u], d in assoc(u, :devices))
+      |> where([u, d], d.is_active == true)
 
     query
     |> DeviceFilters.apply_device_name_filter(device_name_filter)

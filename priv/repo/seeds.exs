@@ -22,7 +22,8 @@ user_data =
   Enum.map(1..1000, fn _ ->
     %{
       email: Faker.Internet.email(),
-      name: Faker.Person.name()
+      name: Faker.Person.name(),
+      deactivated_at: if(Enum.random([true, false]), do: current_time, else: nil)
     }
   end)
 
@@ -34,7 +35,7 @@ Enum.each(user_data, fn user_data ->
       Enum.map(1..50, fn _ ->
         %{
           brand: Enum.random(brands),
-          is_active: Enum.random([true, false]),
+          is_active: if(user_data[:deactivated_at], do: false, else: Enum.random([true, false])),
           name:
             Enum.random([
               "Device Home",
